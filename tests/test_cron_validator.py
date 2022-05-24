@@ -3,6 +3,8 @@ from src.constants import MINUTE, HOUR, DAY_OF_MONTH, MONTH, DAY_OF_WEEK, COMMAN
 from src.exceptions import CronComponentValidationException
 import pytest
 
+INVALID_COMPONENTS_MESSAGE = "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+
 
 def test_lowest_range():
     cron_component_dict = {
@@ -39,7 +41,7 @@ def test_lower_than_allowed_lowest():
     }
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_higher_than_allowed_highest():
@@ -53,7 +55,7 @@ def test_higher_than_allowed_highest():
     }
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_wildcard():
@@ -94,7 +96,7 @@ def test_wildcard_with_division_by_zero():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_range():
@@ -122,7 +124,7 @@ def test_larger_invalid_range():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_lower_invalid_range():
@@ -137,7 +139,7 @@ def test_lower_invalid_range():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_wildcard_with_range():
@@ -152,7 +154,7 @@ def test_wildcard_with_range():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_range_with_division():
@@ -193,7 +195,7 @@ def test_comma_with_values_lower_than_allowed():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_comma_with_values_higher_than_allowed():
@@ -208,7 +210,7 @@ def test_comma_with_values_higher_than_allowed():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
 
 
 def test_comma_with_division():
@@ -223,4 +225,4 @@ def test_comma_with_division():
 
     with pytest.raises(CronComponentValidationException) as e:
         cron_validator.validate_cron_components(cron_component_dict)
-    assert e.value.message == "Invalid cron components: MINUTE HOUR DAY_OF_MONTH MONTH DAY_OF_WEEK"
+    assert e.value.message == INVALID_COMPONENTS_MESSAGE
