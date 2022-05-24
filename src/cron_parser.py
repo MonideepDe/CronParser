@@ -3,6 +3,7 @@ import logging
 
 from src.constants import (COMMA, COMMAND, DAY_OF_MONTH, DAY_OF_WEEK, DIVISION,
                            HOUR, MINUTE, MONTH, NO_PROCESSING, RANGE, WILDCARD)
+from src.cron_pretty_printer import cron_pretty_printer
 from src.cron_validator import cron_validator
 from src.exceptions import (InvalidCronFormatException,
                             InvalidUsageOfSpecialOperators)
@@ -51,7 +52,7 @@ class CronParser:
         cron_component_dict = self._get_cron_components(cron_entry)
         cron_validator.validate_cron_components(cron_component_dict)
         interpreted = self._interpret(cron_component_dict)
-        return "parsed"
+        return cron_pretty_printer.pretty_print(interpreted)
 
     def _interpret(self, cron_component_dict: dict):
         """Interprets each component of cron string"""
