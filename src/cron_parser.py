@@ -1,4 +1,6 @@
-from src.constants import DAY_OF_MONTH, DAY_OF_WEEK, HOUR, MINUTE, COMMAND, MONTH
+from src.constants import (COMMAND, DAY_OF_MONTH, DAY_OF_WEEK, HOUR, MINUTE,
+                           MONTH)
+from src.cron_validator import cron_validator
 from src.exceptions import InvalidCronFormatException
 
 
@@ -30,6 +32,7 @@ class CronParser:
 
     def parse(self, cron_entry: str) -> str:
         cron_component_dict = self._get_cron_components(cron_entry)
+        cron_validator.validate_cron_components(cron_component_dict)
         return "parsed"
 
 

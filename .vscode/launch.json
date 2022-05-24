@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "src/main.py",
             "args": [
-                "*/15 0 1,15 * 2-60/2 /usr/bin/find"
+                "*/15 0 1,15 * 2-6/2 /usr/bin/find"
             ],
             "console": "integratedTerminal",
             "justMyCode": true,
