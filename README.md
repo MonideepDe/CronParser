@@ -15,7 +15,8 @@ command /usr/bin/find
 ```
 
 # Setup
-- create a python virtual environment: <br>
+- IMPORTANT: Python version used is <b>python 3.9</b>
+- Create a python virtual environment: <br>
     `python3 -m venv <Virtual Environment Name>`
 - Activate the virtual environment: <br>
     `source <Virtual Environment Name>/bin/activate`
@@ -27,7 +28,9 @@ command /usr/bin/find
     - ## Using VS Code
         - We have included the necesarry `launch.json` files with this repository. Just go to "Run and Debug" section and RUN the configuration named `CronParser`
     - ## From Command Line
-        - `export PYTHONPATH="<Repository Folder Path>"; python3 src/main.py "<Cron Entry String>"`
+        - `export PYTHONPATH="<Repository Folder Path>"; python3 src/main.py "<Cron Entry String>"` <br>
+        Example: <br>
+        `export PYTHONPATH=$PWD; python3 src/main.py "*/15 0 1,15 * 2-6/2 /usr/bin/find"`
 - To run the tests
     - ## VS Code
         - Go to "Tests" section on the left hand ribbon and select the tests to run.
