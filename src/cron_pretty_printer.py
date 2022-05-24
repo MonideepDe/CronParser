@@ -19,7 +19,7 @@ class CronPrettyPrinter:
                 out_val = " ".join([str(i) for i in out_val])
             print("{0:<14}{1}".format(out_key, out_val))
             out_str_list.append("{0:<14}{1}".format(out_key, out_val))
-        return "\n\r".join(out_str_list)
+        return "\n".join(out_str_list)
 
 
 cron_pretty_printer = CronPrettyPrinter()
