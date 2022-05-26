@@ -34,7 +34,7 @@ class CronValidator:
             CronComponentValidationException: Exception containing details of invalid components
         """
         all_validity = {cron_component: bool(re.fullmatch(self.component_regex_map[cron_component], cron_component_str))
-                        for cron_component, cron_component_str in cron_component_dict.items()}
+                        for cron_component, cron_component_list in cron_component_dict.items() for cron_component_str in cron_component_list}
         if not all(all_validity.values()):
             invalid_components = [cron_component for cron_component,
                                   validity in all_validity.items() if not validity]

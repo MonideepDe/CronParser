@@ -12,8 +12,8 @@ def test__interpretor_lowest_range():
         COMMAND: ""
     }
     interpreted = cron_parser._interpret(cron_component_dict)
-    expected_interpretation = {'MINUTE': '0', 'DAY_OF_WEEK': '0',
-                               'DAY_OF_MONTH': '1', 'HOUR': '0', 'MONTH': '1', 'COMMAND': ''}
+    expected_interpretation = {'MINUTE': [0], 'DAY_OF_WEEK': [0],
+                               'DAY_OF_MONTH': [1], 'HOUR': [0], 'MONTH': [1], 'COMMAND': ""}
     assert interpreted == expected_interpretation
 
 

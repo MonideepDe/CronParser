@@ -29,7 +29,7 @@ class CronParser:
         self._interpretation_excluded_components = [COMMAND]
 
     def _get_cron_components(self, cron_str: str) -> dict:
-        """Gets the 6 components of a cron entry - 
+        """Gets the 6 components of a cron entry -
             MINUTE, HOUR,DAY_OF_MONTH, MONTH, DAY_OF_WEEK, COMMAND
 
         Args:
@@ -45,8 +45,7 @@ class CronParser:
 
         if len(cron_str_split) != self.cron_components_num:
             raise InvalidCronFormatException()
-
-        return {self.cron_format[idx]: component_str for idx, component_str in enumerate(cron_str_split)}
+        return {self.cron_format[idx]: component_str.split(",") for idx, component_str in enumerate(cron_str_split)}
 
     def parse(self, cron_entry: str) -> str:
         cron_component_dict = self._get_cron_components(cron_entry)
@@ -58,39 +57,27 @@ class CronParser:
         """Interprets each component of cron string"""
         cron_component_interpret_dict = {k: v for k, v in cron_component_dict.items(
         ) if k not in self._interpretation_excluded_components}
-        classification = self._classify_cron_components(
-            cron_component_interpret_dict)
+        interpretation = {cron_comp: [] for cron_comp in self.cron_format}
 
-        interpretation = {
-            cron_component: self._handlers[cron_component_kind](
-                cron_component_str=cron_component_interpret_dict[cron_component],
-                cron_component=cron_component,
-                classification=classification
-            )
-            for cron_component_kind in self._interpretation_order for cron_component in classification[cron_component_kind]
-        }
+        for cron_comp, str_list in cron_component_interpret_dict.items():
+            cron_comp_interpreted = []
+            for cron_str in str_list:
+                if "/" in cron_str:
+                    cron_comp_interpreted.extend(self._handlers[DIVISION](
+                        cron_str, cron_comp, "*" in cron_str, "-" in cron_str))
+                elif "*" in cron_str:
+                    cron_comp_interpreted.extend(self._handlers[WILDCARD](
+                        cron_str, cron_comp, "/" in cron_str))
+                elif "-" in cron_str:
+                    cron_comp_interpreted.extend(self._handlers[RANGE](
+                        cron_str, cron_comp, "/" in cron_str))
+                else:
+                    cron_comp_interpreted.extend([int(cron_str)])
+            interpretation[cron_comp] = sorted(
+                list(set(cron_comp_interpreted)))
 
         interpretation[COMMAND] = cron_component_dict[COMMAND]
         return interpretation
-
-    def _classify_cron_components(self, cron_component_dict: dict):
-        classfication = {WILDCARD: [],
-                         COMMA: [], RANGE: [], DIVISION: [], NO_PROCESSING: []}
-        for component, component_str in cron_component_dict.items():
-            if "*" in component_str:
-                classfication[WILDCARD].append(component)
-            if "," in component_str:
-                classfication[COMMA].append(component)
-            if "-" in component_str:
-                classfication[RANGE].append(component)
-            if "/" in component_str:
-                classfication[DIVISION].append(component)
-
-        no_processing_keys = set(cron_component_dict.keys(
-        )) - set([cron_comp for cron_comp_list in list(classfication.values()) for cron_comp in cron_comp_list])
-        if len(no_processing_keys):
-            classfication[NO_PROCESSING].extend(no_processing_keys)
-        return classfication
 
     def _handle_no_processing(self, cron_component_str: str, **argv: dict):
         return cron_component_str
@@ -99,24 +86,24 @@ class CronParser:
         logging.info(f"handling comma: {cron_component_str}")
         return [i for i in sorted([int(c) for c in cron_component_str.split(",")])]
 
-    def _handle_wildcard(self, cron_component_str: str, cron_component: str, classification: dict):
+    def _handle_wildcard(self, cron_component_str: str, cron_component: str, has_division):
         logging.info(f"handling wildcard: {cron_component_str}")
-        if cron_component in classification[DIVISION]:
+        if has_division:
             logging.info("Ignoring ... will be handled by DIVISION handler")
         return [i for i in range(self._field_range[cron_component][0], self._field_range[cron_component][1] + 1)]
 
-    def _handle_range(self, cron_component_str: str, cron_component: str, classification: dict):
+    def _handle_range(self, cron_component_str: str, cron_component: str, has_division):
         logging.info(f"handling range: {cron_component_str}")
-        if cron_component in classification[DIVISION]:
+        if has_division:
             logging.info("Ignoring ... will be handled by DIVISION handler")
         low, high = cron_component_str.split("/")[0].split("-")
         return [i for i in range(int(low), int(high)+1)]
 
-    def _handle_division(self, cron_component_str: str, cron_component: str, classification: dict):
+    def _handle_division(self, cron_component_str: str, cron_component: str, has_wildcard, has_range):
         logging.info(f"handling division: {cron_component_str}")
-        if cron_component in classification[WILDCARD]:
+        if has_wildcard:
             return self._handle_division_with_wildcard(cron_component_str, cron_component)
-        elif cron_component in classification[RANGE]:
+        elif has_range:
             return self._handle_division_with_range(cron_component_str=cron_component_str, cron_component=cron_component)
         else:
             raise InvalidUsageOfSpecialOperators(
